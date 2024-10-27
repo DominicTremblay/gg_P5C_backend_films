@@ -41,7 +41,7 @@ class FilmSeeder(Seeder):
                 "titre": "Mission: Impossible – Dead Reckoning Part One",
                 "genre": "Action",
                 "annee_sortie": 2023,
-                "image_url": "https://example.com/mi7.jpg",
+                "image_url": "https://m.media-amazon.com/images/I/91dYe4m4XXL.jpg",
                 "description": "Ethan Hunt doit stopper une nouvelle menace mondiale."
             },
             {
