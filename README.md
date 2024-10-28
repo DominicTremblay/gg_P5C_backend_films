@@ -1,10 +1,10 @@
-# App de gestion d'une collection de films
+# Squelette de projet Flask
 
 ## Installation
 
 1. Cloner le dépôt
 
-`git clone git@github.com:DominicTremblay/p5c-intra.git examen-intra`
+`git@github.com:DominicTremblay/Flask-Boilerplate.git`
 
 2. Créer un fichier `.env` à la racine du projet
 
