@@ -38,6 +38,7 @@ def liste_films():
         db.session.rollback()
         return jsonify({"erreur": "Une erreur s'est produite"}), 500
 
+
 @api_bp.route("/films/<int:id>", methods=["GET"])
 def obtenir_film(id):
     try:
@@ -58,6 +59,7 @@ def obtenir_film(id):
         db.session.rollback()
         return jsonify({"erreur": "Une erreur s'est produite"}), 500
 
+
 @api_bp.route("/films", methods=["POST"])
 def creer_film():
 
@@ -74,16 +76,21 @@ def creer_film():
         db.session.add(film)
         db.session.commit()
 
-        return jsonify({
-            "message": "Film cree avec succes",
-            "film": {
-                "id": film.id,
-                "titre": film.titre,
-                "genre": film.genre,
-                "annee_sortie": film.annee_sortie
-            }
-        }), 201
-    
+        return (
+            jsonify(
+                {
+                    "message": "Film cree avec succes",
+                    "film": {
+                        "id": film.id,
+                        "titre": film.titre,
+                        "genre": film.genre,
+                        "annee_sortie": film.annee_sortie,
+                    },
+                }
+            ),
+            201,
+        )
+
     except Exception as e:
         db.session.rollback()
         return jsonify({"erreur": "Une erreur s'est produite"}), 500
@@ -95,3 +102,56 @@ def creer_film():
 # 	"annee_sortie": 2022,
 # 	"genre": "Action epique"
 # }
+
+@api_bp.route("/films/<int:id>", methods=["PUT"])
+def mise_a_jour_film(id):
+    try:
+        film = Film.query.get_or_404(id)
+        film_data = request.get_json()
+
+        if "titre" in film_data:
+            film.titre = film_data["titre"]
+
+        if "description" in film_data:
+            film.description = film_data["description"]
+
+        if "annee_sortie" in film_data:
+            film.annee_sortie = film["annee_sortie"]
+
+        if "genre" in film_data:
+            film.genre = film_data["genre"]
+
+        db.session.commit()
+
+        return (
+            jsonify(
+                {
+                    "message": "Film mis à jour avec succès",
+                    "film": {
+                        "id": film.id,
+                        "titre": film.titre,
+                        "genre": film.genre,
+                        "annee_sortie": film.annee_sortie,
+                        "description": film.description,
+                    },
+                }
+            ),
+            200,
+        )
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"erreur": "Une erreur s'est produite"}), 500
+
+
+@api_bp.route('/films/<int:id>', methods=["DELETE"])
+def detruire_film(id):
+    try:
+        film = Film.query.get_or_404(id)
+        db.session.delete(film)
+        db.session.commit() 
+        return jsonify({"message": f"Le film {film.titre} a ete supprime avec succes"}), 200    
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"erreur": "Une erreur s'est produite"}), 500
