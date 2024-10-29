@@ -15,65 +15,79 @@ def accueil():
 
 @api_bp.route("/films", methods=["GET"])
 def liste_films():
-    films = Film.query.all()
+    try:
+        films = Film.query.all()
 
-    if not films:
-        return jsonify({"message": "Aucun film disponible"}), 404
+        if not films:
+            return jsonify({"message": "Aucun film disponible"}), 404
 
-    print(films)
-    films_json = [
-        {
-            "id": film.id,
-            "titre": film.titre,
-            "description": film.description,
-            "genre": film.genre,
-            "annee_sortie": film.annee_sortie,
-        }
-        for film in films
-    ]
-    return jsonify(films_json)
+        print(films)
+        films_json = [
+            {
+                "id": film.id,
+                "titre": film.titre,
+                "description": film.description,
+                "genre": film.genre,
+                "annee_sortie": film.annee_sortie,
+            }
+            for film in films
+        ]
+        return jsonify(films_json)
 
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"erreur": "Une erreur s'est produite"}), 500
 
 @api_bp.route("/films/<int:id>", methods=["GET"])
 def obtenir_film(id):
-    film = Film.query.get(id)
+    try:
+        film = Film.query.get(id)
 
-    if not film:
-        return jsonify({"message": "Film non disponible"}), 404
+        if not film:
+            return jsonify({"message": "Film non disponible"}), 404
 
-    film_json = {
-        "id": film.id,
-        "titre": film.titre,
-        "genre": film.genre,
-        "annee_sortie": film.annee_sortie,
-    }
-    return jsonify(film_json)
+        film_json = {
+            "id": film.id,
+            "titre": film.titre,
+            "genre": film.genre,
+            "annee_sortie": film.annee_sortie,
+        }
+        return jsonify(film_json)
 
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"erreur": "Une erreur s'est produite"}), 500
 
 @api_bp.route("/films", methods=["POST"])
 def creer_film():
 
-    film_data = request.get_json()
+    try:
+        film_data = request.get_json()
 
-    film = Film(
-        titre=film_data["titre"],
-        description=film_data["description"],
-        annee_sortie=film_data["annee_sortie"],
-        genre=film_data["genre"],
-    )
+        film = Film(
+            titre=film_data["titre"],
+            description=film_data["description"],
+            annee_sortie=film_data["annee_sortie"],
+            genre=film_data["genre"],
+        )
 
-    db.session.add(film)
-    db.session.commit()
+        db.session.add(film)
+        db.session.commit()
 
-    return jsonify({
-        "message": "Film cree avec succes",
-        "film": {
-            "id": film.id,
-            "titre": film.titre,
-            "genre": film.genre,
-            "annee_sortie": film.annee_sortie
-        }
-    }), 201
+        return jsonify({
+            "message": "Film cree avec succes",
+            "film": {
+                "id": film.id,
+                "titre": film.titre,
+                "genre": film.genre,
+                "annee_sortie": film.annee_sortie
+            }
+        }), 201
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"erreur": "Une erreur s'est produite"}), 500
+
 
 # {
 # 	"titre": "The Batman",
