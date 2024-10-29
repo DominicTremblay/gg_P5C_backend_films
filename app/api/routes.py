@@ -24,7 +24,6 @@ def liste_films():
     films_json = [
         {
             "id": film.id,
-        \
             "titre": film.titre,
             "genre": film.genre,
             "annee_sortie": film.annee_sortie,
@@ -40,7 +39,7 @@ def obtenir_film(id):
 
     if not film:
         return jsonify({"message": "Film non disponible"}), 404
-       
+
     film_json = {
         "id": film.id,
         "titre": film.titre,
@@ -48,3 +47,36 @@ def obtenir_film(id):
         "annee_sortie": film.annee_sortie,
     }
     return jsonify(film_json)
+
+
+@api_bp.route("/films", methods=["POST"])
+def creer_film():
+
+    film_data = request.get_json()
+
+    film = Film(
+        titre=film_data["titre"],
+        description=film_data["description"],
+        annee_sortie=film_data["annee_sortie"],
+        genre=film_data["genre"],
+    )
+
+    db.session.add(film)
+    db.session.commit()
+
+    return jsonify({
+        "message": "Film cree avec succes",
+        "film": {
+            "id": film.id,
+            "titre": film.titre,
+            "genre": film.genre,
+            "annee_sortie": film.annee_sortie
+        }
+    }), 201
+
+# {
+# 	"titre": "The Batman",
+# 	"description": "Bruce Wayne affronte le Riddler, un tueur mystérieux, dans un Gotham.",
+# 	"annee_sortie": 2022,
+# 	"genre": "Action epique"
+# }
