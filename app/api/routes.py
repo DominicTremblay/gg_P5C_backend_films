@@ -25,6 +25,7 @@ def liste_films():
         {
             "id": film.id,
             "titre": film.titre,
+            "description": film.description,
             "genre": film.genre,
             "annee_sortie": film.annee_sortie,
         }
@@ -76,7 +77,7 @@ def creer_film():
 
 # {
 # 	"titre": "The Batman",
-# 	"description": "Bruce Wayne affronte le Riddler, un tueur mystérieux, dans un Gotham.",
+# 	"description": "Bruce Wayne affronte le Riddler, un tueur mystérieux, dans un Gotham sombre.",
 # 	"annee_sortie": 2022,
 # 	"genre": "Action epique"
 # }
