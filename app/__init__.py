@@ -1,4 +1,5 @@
 from flask import Flask, flash, redirect, url_for
+from flask_cors import CORS
 from app.extensions import db, migrate, seeder, login
 from flask_bootstrap import Bootstrap
 from app.api import api_bp
@@ -15,6 +16,8 @@ def create_app():
     migrate.init_app(app, db)
     seeder.init_app(app, db)  # Initialize seeder with app and db
     login.init_app(app)
+
+    CORS(app)
 
     # Provide Bootstrap to the app
     Bootstrap(app)

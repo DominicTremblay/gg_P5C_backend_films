@@ -25,6 +25,7 @@ def liste_films():
         films_json = [
             {
                 "id": film.id,
+                "image_url": film.image_url,
                 "titre": film.titre,
                 "description": film.description,
                 "genre": film.genre,
