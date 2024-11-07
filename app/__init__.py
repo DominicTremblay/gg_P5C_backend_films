@@ -1,6 +1,7 @@
 from flask import Flask, flash, redirect, url_for
 from flask_cors import CORS
 from app.extensions import db, migrate, seeder, login
+from flask_jwt_extended import JWTManager
 from flask_bootstrap import Bootstrap
 from app.api import api_bp
 
@@ -18,6 +19,8 @@ def create_app():
     login.init_app(app)
 
     CORS(app)
+
+    jwt = JWTManager(app)
 
     # Provide Bootstrap to the app
     Bootstrap(app)

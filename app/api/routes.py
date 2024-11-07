@@ -1,16 +1,65 @@
 from flask import jsonify, request
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from app.extensions import db
 
 # Activer la ligne c-dessous lorsque le modele est cree
 from app.modeles import Film, Utilisateur, Commentaire
 from app.api import api_bp
 
+# Creer les routes d'authentifications
+
+
+# Creer le login (session)
+@api_bp.route("/session", methods=["POST"])
+def ouvrir_session():
+    data = request.get_json()
+    print(data)
+    utilisateur = Utilisateur.query.filter_by(courriel=data["courriel"]).first()
+
+    # valider le mot de passe
+    if not utilisateur or not utilisateur.valide_mot_passe(data["mot_passe"]):
+        return jsonify({"erreur": "Donnees d'authentifcation invalides"})
+
+    # l'utilisateur est authentifie, creer le jwt
+    jeton_jwt = create_access_token(identity=utilisateur.id)
+
+    return jsonify({"jeton": jeton_jwt}), 201
+
+
+# Creer Incription
+
+
+@api_bp.route("/inscription", methods=["POST"])
+def incription():
+    data = request.get_json()
+
+    print("DATA ========")
+    print(data["mot_passe"])
+
+    # A faire validation si l'utilisateur existe deja
+
+    utilisateur = Utilisateur(nom=data["nom"], courriel=data["courriel"])
+    utilisateur.encode_mot_passe(data["mot_passe"])
+
+    db.session.add(utilisateur)
+    db.session.commit()
+
+    return jsonify({"message": "L'utilisateur a ete creer avec succes"}), 201
+
+
 # Creer les routes pour les operations CRUD
 
 
 @api_bp.route("/", methods=["GET"])
+@jwt_required()
 def accueil():
-    return "Page d'accueil"
+
+    id = get_jwt_identity()
+    print(f"Id utilisateur: {id}")
+
+    utilisateur = Utilisateur.query.get(id)
+
+    return {"nom": utilisateur.nom, "courriel": utilisateur.courriel}
 
 
 @api_bp.route("/films", methods=["GET"])
@@ -104,6 +153,7 @@ def creer_film():
 # 	"genre": "Action epique"
 # }
 
+
 @api_bp.route("/films/<int:id>", methods=["PUT"])
 def mise_a_jour_film(id):
     try:
@@ -145,13 +195,16 @@ def mise_a_jour_film(id):
         return jsonify({"erreur": "Une erreur s'est produite"}), 500
 
 
-@api_bp.route('/films/<int:id>', methods=["DELETE"])
+@api_bp.route("/films/<int:id>", methods=["DELETE"])
 def detruire_film(id):
     try:
         film = Film.query.get_or_404(id)
         db.session.delete(film)
-        db.session.commit() 
-        return jsonify({"message": f"Le film {film.titre} a ete supprime avec succes"}), 200    
+        db.session.commit()
+        return (
+            jsonify({"message": f"Le film {film.titre} a ete supprime avec succes"}),
+            200,
+        )
 
     except Exception as e:
         db.session.rollback()

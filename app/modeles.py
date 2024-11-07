@@ -41,7 +41,13 @@ class Utilisateur(UserMixin, db.Model):
     films = db.relationship(
         'Film', secondary='favoris', back_populates='utilisateurs'
     )
-    
+
+    def encode_mot_passe(self, mot_passe):
+        self.mot_passe_hache = generate_password_hash(mot_passe)
+
+    def valide_mot_passe(self, mot_passe):
+        return check_password_hash(self.mot_passe_hache, mot_passe)
+
     @login.user_loader
     def load_user(id):
         return db.session.get(Utilisateur, int(id))
