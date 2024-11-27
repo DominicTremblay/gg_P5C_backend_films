@@ -28,6 +28,7 @@ def ouvrir_session():
             {
                 "jeton": jeton_jwt,
                 "id": utilisateur.id,
+                "avatarUrl": utilisateur.avatar_url,
                 "nom": utilisateur.nom,
                 "courriel": utilisateur.courriel,
             }
@@ -222,3 +223,5 @@ def detruire_film(id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"erreur": "Une erreur s'est produite"}), 500
+
+
