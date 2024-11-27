@@ -33,6 +33,7 @@ class Utilisateur(UserMixin, db.Model):
     nom = db.Column(db.String(50), nullable=False)
     courriel = db.Column(db.String(100), nullable=False, index=True, unique=True)
     mot_passe_hache = db.Column(db.String(256), nullable=False)
+    avatar_url = db.Column(db.String(200), nullable=True)
 
     # Relation one-to-many avec Commentaire
     commentaires = db.relationship('Commentaire', back_populates='utilisateur', cascade='all, delete-orphan')
