@@ -10,7 +10,7 @@ def create_app():
     app = Flask(__name__)
 
     # Load the configuration from config.py or environment variables
-    app.config.from_object('config.Config')
+    app.config.from_object("config.Config")
 
     # Initialize the extensions with the app
     db.init_app(app)
@@ -18,7 +18,7 @@ def create_app():
     seeder.init_app(app, db)  # Initialize seeder with app and db
     login.init_app(app)
 
-    CORS(app)
+    CORS(app, resources={r"/api/*": {"origins": "http://localhost:8081"}})
 
     jwt = JWTManager(app)
 
@@ -31,6 +31,6 @@ def create_app():
         from . import routes
 
     # Register Blueprints
-    app.register_blueprint(api_bp, url_prefix='/api')
+    app.register_blueprint(api_bp, url_prefix="/api")
 
     return app
