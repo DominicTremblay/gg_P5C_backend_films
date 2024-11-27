@@ -23,7 +23,17 @@ def ouvrir_session():
     # l'utilisateur est authentifie, creer le jwt
     jeton_jwt = create_access_token(identity=utilisateur.id)
 
-    return jsonify({"jeton": jeton_jwt}), 201
+    return (
+        jsonify(
+            {
+                "jeton": jeton_jwt,
+                "id": utilisateur.id,
+                "nom": utilisateur.nom,
+                "courriel": utilisateur.courriel,
+            }
+        ),
+        201,
+    )
 
 
 # Creer Incription
@@ -63,6 +73,7 @@ def accueil():
 
 
 @api_bp.route("/films", methods=["GET"])
+@jwt_required()
 def liste_films():
     try:
         films = Film.query.all()
@@ -90,6 +101,7 @@ def liste_films():
 
 
 @api_bp.route("/films/<int:id>", methods=["GET"])
+@jwt_required()
 def obtenir_film(id):
     try:
         film = Film.query.get(id)
@@ -99,6 +111,7 @@ def obtenir_film(id):
 
         film_json = {
             "id": film.id,
+            "image_url": film.image_url,
             "titre": film.titre,
             "genre": film.genre,
             "annee_sortie": film.annee_sortie,
