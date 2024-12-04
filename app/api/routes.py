@@ -225,3 +225,22 @@ def detruire_film(id):
         return jsonify({"erreur": "Une erreur s'est produite"}), 500
 
 
+@api_bp.route("/utilisateurs/profile/films", methods=["GET"])
+@jwt_required()
+def films_favoris():
+    id = get_jwt_identity()
+    utilisateur = Utilisateur.query.get(id)
+
+    if not utilisateur:
+        return jsonify({"error": "Utilisateur introuvable"}), 404
+    
+    favoris = [{
+        "id": film.id,
+        "titre": film.titre,
+        "genre": film.genre,
+        "annee_sortie": film.annee_sortie,
+        "image_url": film.image_url,
+        "description": film.description
+    } for film in utilisateur.films]
+
+    return jsonify({"favoris": favoris})
